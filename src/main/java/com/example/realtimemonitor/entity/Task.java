@@ -17,6 +17,7 @@ public class Task {
 
     private Integer priority;
 
+    @Enumerated(EnumType.STRING)
     private TaskStatus status;
 
     private LocalDateTime createdAt;

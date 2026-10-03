@@ -1,7 +1,6 @@
 package com.example.realtimemonitor.exception;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -37,9 +36,21 @@ public class GlobalExceptionHandler {
             response.addError(error.getField(), error.getDefaultMessage());
         }
 
-
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
+                .body(response);
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handle(ResourceNotFoundException e) {
+        ErrorResponse response = new ErrorResponse(
+                404,
+                e.getMessage(),
+                LocalDateTime.now()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
                 .body(response);
     }
 }

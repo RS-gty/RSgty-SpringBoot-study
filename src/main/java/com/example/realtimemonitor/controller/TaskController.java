@@ -2,6 +2,7 @@ package com.example.realtimemonitor.controller;
 
 import com.example.realtimemonitor.dto.TaskCreateRequest;
 import com.example.realtimemonitor.dto.TestRequest;
+import com.example.realtimemonitor.entity.Task;
 import com.example.realtimemonitor.service.TaskService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,7 +18,7 @@ public class TaskController {
     }
 
     @PostMapping("/tasks")
-    public String postTasks(@Valid @RequestBody TaskCreateRequest request) {
+    public Task postTasks(@Valid @RequestBody TaskCreateRequest request) {
         return this.taskService.createTask(request);
     }
 }

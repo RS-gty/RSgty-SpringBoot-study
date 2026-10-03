@@ -1,7 +1,9 @@
 package com.example.realtimemonitor.service;
 
 import com.example.realtimemonitor.dto.TaskCreateRequest;
+import com.example.realtimemonitor.dto.TaskUpdateRequest;
 import com.example.realtimemonitor.entity.Task;
+import com.example.realtimemonitor.entity.TaskStatus;
 import com.example.realtimemonitor.exception.ResourceNotFoundException;
 import com.example.realtimemonitor.repository.TaskRepository;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,7 @@ public class TaskService {
         task.setName(request.getName());
         task.setDescription(request.getDescription());
         task.setPriority(request.getPriority());
+        task.setStatus(TaskStatus.PENDING);
 
         return taskRepository.save(task);
     }
@@ -49,5 +52,19 @@ public class TaskService {
         }
 
         taskRepository.deleteById(id);
+    }
+
+    public Task updateTask(Long id, TaskUpdateRequest request){
+        Optional<Task> taskOptional = taskRepository.findById(id);
+
+        if (taskOptional.isPresent()) {
+            Task task = taskOptional.get();
+            task.setName(request.getName());
+            task.setDescription(request.getDescription());
+            task.setPriority(request.getPriority());
+            return taskRepository.save(task);
+        } else {
+            throw new ResourceNotFoundException("Task with id " + id + " does not exist");
+        }
     }
 }

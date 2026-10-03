@@ -1,6 +1,7 @@
 package com.example.realtimemonitor.controller;
 
 import com.example.realtimemonitor.dto.TaskCreateRequest;
+import com.example.realtimemonitor.dto.TaskUpdateRequest;
 import com.example.realtimemonitor.entity.Task;
 import com.example.realtimemonitor.service.TaskService;
 import jakarta.validation.Valid;
@@ -37,5 +38,10 @@ public class TaskController {
         taskService.deleteTask(id);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/tasks/{id}")
+    public Task updateTask(@PathVariable Long id, @Valid @RequestBody TaskUpdateRequest request) {
+        return taskService.updateTask(id, request);
     }
 }

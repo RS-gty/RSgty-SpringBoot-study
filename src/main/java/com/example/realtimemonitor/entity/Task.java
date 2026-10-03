@@ -24,6 +24,10 @@ public class Task {
 
     private LocalDateTime updatedAt;
 
+    private Integer intervalSeconds;
+
+    private LocalDateTime lastCheckTime;
+
 
     public Task() {}
 
@@ -65,5 +69,21 @@ public class Task {
 
     public TaskStatus getStatus() {
         return status;
+    }
+
+    public Integer getIntervalSeconds() {
+        return intervalSeconds;
+    }
+
+    public void setIntervalSeconds(Integer intervalSeconds) {
+        this.intervalSeconds = intervalSeconds;
+    }
+
+    public LocalDateTime getLastCheckTime() {
+        return lastCheckTime;
+    }
+
+    public void setLastCheckTime(LocalDateTime lastCheckTime) {
+        this.lastCheckTime = lastCheckTime;
     }
 }

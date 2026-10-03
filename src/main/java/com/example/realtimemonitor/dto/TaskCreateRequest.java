@@ -14,6 +14,10 @@ public class TaskCreateRequest {
     @Max(5)
     private Integer priority;
 
+    @NotNull
+    @Min(1)
+    private Integer intervalSeconds;
+
 
     public TaskCreateRequest() {}
 
@@ -39,5 +43,13 @@ public class TaskCreateRequest {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Integer getIntervalSeconds() {
+        return intervalSeconds;
+    }
+
+    public void setIntervalSeconds(Integer intervalSeconds) {
+        this.intervalSeconds = intervalSeconds;
     }
 }

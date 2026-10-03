@@ -13,7 +13,7 @@ public class MonitorScheduler {
         this.monitorService = monitorService;
     }
 
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = 1000)
     public void checkTasks() {
         monitorService.checkAllTasks();
     }

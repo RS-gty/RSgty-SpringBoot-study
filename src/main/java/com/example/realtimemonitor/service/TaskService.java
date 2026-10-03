@@ -26,6 +26,7 @@ public class TaskService {
         task.setName(request.getName());
         task.setDescription(request.getDescription());
         task.setPriority(request.getPriority());
+        task.setIntervalSeconds(request.getIntervalSeconds());
         task.setStatus(TaskStatus.PENDING);
 
         return taskRepository.save(task);

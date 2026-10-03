@@ -30,6 +30,11 @@ public class TestController {
                 + ", age=" + request.getAge();
     }
 
+    @GetMapping("/exception")
+    public void getException() {
+        throw new RuntimeException("测试异常");
+    }
+
     @GetMapping("/user/{id}")
     public String getUser(@PathVariable long id) {
         return "User ID: " + id;

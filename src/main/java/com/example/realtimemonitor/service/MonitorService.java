@@ -1,9 +1,11 @@
 package com.example.realtimemonitor.service;
 
+import com.example.realtimemonitor.entity.CheckRecord;
 import com.example.realtimemonitor.entity.Task;
 import com.example.realtimemonitor.entity.TaskStatus;
 import com.example.realtimemonitor.exception.ResourceNotFoundException;
 import com.example.realtimemonitor.monitor.MonitorChecker;
+import com.example.realtimemonitor.repository.CheckRecordRepository;
 import com.example.realtimemonitor.repository.TaskRepository;
 import org.springframework.stereotype.Service;
 
@@ -16,13 +18,16 @@ public class MonitorService {
 
     private final TaskRepository taskRepository;
     private final MonitorChecker monitorChecker;
+    private final CheckRecordRepository checkRecordRepository;
 
     public MonitorService(
             TaskRepository taskRepository,
-            MonitorChecker monitorChecker
+            MonitorChecker monitorChecker,
+            CheckRecordRepository checkRecordRepository
     ) {
         this.taskRepository = taskRepository;
         this.monitorChecker = monitorChecker;
+        this.checkRecordRepository = checkRecordRepository;
     }
 
     public Task checkTask(Long id) {
@@ -33,18 +38,54 @@ public class MonitorService {
                         )
                 );
 
+        CheckRecord record = new CheckRecord();
+
+        record.setTaskId(task.getId());
+
+        LocalDateTime startTime = LocalDateTime.now();
+        record.setStartTime(startTime);
+
         task.setStatus(TaskStatus.RUNNING);
         task.setLastCheckTime(LocalDateTime.now());
 
         taskRepository.save(task);
 
-        boolean success = monitorChecker.check(task);
+        try {
+            boolean success = monitorChecker.check(task);
 
-        if (success) {
-            task.setStatus(TaskStatus.SUCCESS);
-        } else {
+            LocalDateTime endTime = LocalDateTime.now();
+
+            record.setEndTime(endTime);
+
+            record.setDuration(
+                    Duration.between(startTime, endTime).toMillis()
+            );
+
+            if (success) {
+                task.setStatus(TaskStatus.SUCCESS);
+                record.setResult("SUCCESS");
+            } else {
+                task.setStatus(TaskStatus.FAILED);
+                record.setResult("FAILED");
+            }
+
+        } catch (Exception e) {
+
+            LocalDateTime endTime = LocalDateTime.now();
+
+            record.setEndTime(endTime);
+
+            record.setDuration(
+                    Duration.between(startTime, endTime).toMillis()
+            );
+
+            record.setResult("ERROR");
+            record.setErrorMessage(e.getMessage());
+
             task.setStatus(TaskStatus.FAILED);
         }
+
+        checkRecordRepository.save(record);
 
         return taskRepository.save(task);
     }

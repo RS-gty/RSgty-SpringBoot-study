@@ -2,9 +2,11 @@ package com.example.realtimemonitor.service;
 
 import com.example.realtimemonitor.dto.TaskCreateRequest;
 import com.example.realtimemonitor.dto.TaskUpdateRequest;
+import com.example.realtimemonitor.entity.CheckRecord;
 import com.example.realtimemonitor.entity.Task;
 import com.example.realtimemonitor.entity.TaskStatus;
 import com.example.realtimemonitor.exception.ResourceNotFoundException;
+import com.example.realtimemonitor.repository.CheckRecordRepository;
 import com.example.realtimemonitor.repository.TaskRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +17,11 @@ import java.util.Optional;
 public class TaskService {
 
     private final TaskRepository taskRepository;
+    private final CheckRecordRepository checkRecordRepository;
 
-    public TaskService(TaskRepository taskRepository) {
+    public TaskService(TaskRepository taskRepository, CheckRecordRepository checkRecordRepository) {
         this.taskRepository = taskRepository;
+        this.checkRecordRepository = checkRecordRepository;
     }
 
     public Task createTask(TaskCreateRequest request){
@@ -67,5 +71,9 @@ public class TaskService {
         } else {
             throw new ResourceNotFoundException("Task with id " + id + " does not exist");
         }
+    }
+
+    public List<CheckRecord> getRecords(Long taskId) {
+        return checkRecordRepository.findByTaskId(taskId);
     }
 }

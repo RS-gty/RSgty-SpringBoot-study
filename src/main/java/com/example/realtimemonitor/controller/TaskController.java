@@ -2,6 +2,7 @@ package com.example.realtimemonitor.controller;
 
 import com.example.realtimemonitor.dto.TaskCreateRequest;
 import com.example.realtimemonitor.dto.TaskUpdateRequest;
+import com.example.realtimemonitor.entity.CheckRecord;
 import com.example.realtimemonitor.entity.Task;
 import com.example.realtimemonitor.service.MonitorService;
 import com.example.realtimemonitor.service.TaskService;
@@ -54,5 +55,12 @@ public class TaskController {
     @PostMapping("/tasks/{id}/check")
     public Task checkTask(@PathVariable Long id) {
         return monitorService.checkTask(id);
+    }
+
+    @GetMapping("/tasks/{id}/records")
+    public List<CheckRecord> getRecords(
+            @PathVariable Long id
+    ) {
+        return taskService.getRecords(id);
     }
 }

@@ -14,16 +14,22 @@ public class MockController {
         this.mockChecker = mockChecker;
     }
 
-    @PostMapping("/result/{result}")
-    public String setResult(@PathVariable MockResult result) {
+    @PostMapping("/{taskId}/result/{result}")
+    public String setResult(
+            @PathVariable Long taskId,
+            @PathVariable MockResult result
+    ) {
 
-        mockChecker.setResult(result);
+        mockChecker.setResult(taskId, result);
 
-        return "Mock result changed to " + result;
+        return "Task " + taskId +
+                " mock result changed to " + result;
     }
 
-    @GetMapping("/result")
-    public MockResult getResult() {
-        return mockChecker.getResult();
+    @GetMapping("/{taskId}/result")
+    public MockResult getResult(
+            @PathVariable Long taskId
+    ) {
+        return mockChecker.getResult(taskId);
     }
 }

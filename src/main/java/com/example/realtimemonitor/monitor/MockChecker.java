@@ -3,13 +3,21 @@ package com.example.realtimemonitor.monitor;
 import com.example.realtimemonitor.entity.Task;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 @Component
 public class MockChecker implements MonitorChecker {
 
-    private MockResult result = MockResult.SUCCESS;
+    private final Map<Long, MockResult> results = new ConcurrentHashMap<>();
 
     @Override
     public boolean check(Task task) {
+
+        MockResult result = results.getOrDefault(
+                task.getId(),
+                MockResult.SUCCESS
+        );
 
         return switch (result) {
             case SUCCESS -> true;
@@ -36,11 +44,14 @@ public class MockChecker implements MonitorChecker {
         };
     }
 
-    public void setResult(MockResult result) {
-        this.result = result;
+    public void setResult(Long taskId, MockResult result) {
+        results.put(taskId, result);
     }
 
-    public MockResult getResult() {
-        return result;
+    public MockResult getResult(Long taskId) {
+        return results.getOrDefault(
+                taskId,
+                MockResult.SUCCESS
+        );
     }
 }

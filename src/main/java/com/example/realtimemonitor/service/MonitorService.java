@@ -1,5 +1,6 @@
 package com.example.realtimemonitor.service;
 
+import com.example.realtimemonitor.dto.TaskStatusMessage;
 import com.example.realtimemonitor.entity.CheckRecord;
 import com.example.realtimemonitor.entity.Task;
 import com.example.realtimemonitor.entity.TaskStatus;
@@ -19,15 +20,18 @@ public class MonitorService {
     private final TaskRepository taskRepository;
     private final MonitorChecker monitorChecker;
     private final CheckRecordRepository checkRecordRepository;
+    private final TaskWebSocketService taskWebSocketService;
 
     public MonitorService(
             TaskRepository taskRepository,
             MonitorChecker monitorChecker,
-            CheckRecordRepository checkRecordRepository
+            CheckRecordRepository checkRecordRepository,
+            TaskWebSocketService taskWebSocketService
     ) {
         this.taskRepository = taskRepository;
         this.monitorChecker = monitorChecker;
         this.checkRecordRepository = checkRecordRepository;
+        this.taskWebSocketService = taskWebSocketService;
     }
 
     public Task checkTask(Long id) {
@@ -69,6 +73,15 @@ public class MonitorService {
                 record.setResult("FAILED");
             }
 
+            taskWebSocketService.sendTaskStatus(
+                    new TaskStatusMessage(
+                            task.getId(),
+                            task.getStatus().name(),
+                            record.getDuration(),
+                            record.getResult()
+                    )
+            );
+
         } catch (Exception e) {
 
             LocalDateTime endTime = LocalDateTime.now();
@@ -83,6 +96,15 @@ public class MonitorService {
             record.setErrorMessage(e.getMessage());
 
             task.setStatus(TaskStatus.FAILED);
+
+            taskWebSocketService.sendTaskStatus(
+                    new TaskStatusMessage(
+                            task.getId(),
+                            task.getStatus().name(),
+                            record.getDuration(),
+                            record.getResult()
+                    )
+            );
         }
 
         checkRecordRepository.save(record);

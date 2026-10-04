@@ -1,0 +1,1 @@
+TRUNCATE TABLE check_records;

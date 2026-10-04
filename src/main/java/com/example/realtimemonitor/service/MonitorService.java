@@ -112,29 +112,4 @@ public class MonitorService {
         return taskRepository.save(task);
     }
 
-    public void checkAllTasks() {
-        List<Task> tasks = taskRepository.findAll();
-
-        LocalDateTime now = LocalDateTime.now();
-
-        for (Task task : tasks) {
-            if (shouldCheck(task, now)) {
-                checkTask(task.getId());
-            }
-        }
-    }
-
-    private boolean shouldCheck(Task task, LocalDateTime now) {
-        if (task.getLastCheckTime() == null) {
-            return true;
-        }
-
-        long elapsedSeconds =
-                Duration.between(
-                        task.getLastCheckTime(),
-                        now
-                ).getSeconds();
-
-        return elapsedSeconds >= task.getIntervalSeconds();
-    }
 }

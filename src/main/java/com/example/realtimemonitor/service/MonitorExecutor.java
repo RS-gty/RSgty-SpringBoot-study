@@ -7,20 +7,39 @@ import org.springframework.stereotype.Service;
 public class MonitorExecutor {
 
     private final MonitorService monitorService;
+    private final RunningTaskManager runningTaskManager;
 
-    public MonitorExecutor(MonitorService monitorService) {
+    public MonitorExecutor(
+            MonitorService monitorService,
+            RunningTaskManager runningTaskManager
+    ) {
         this.monitorService = monitorService;
+        this.runningTaskManager = runningTaskManager;
     }
 
     @Async("monitorTaskExecutor")
     public void execute(Long taskId) {
 
-        System.out.println(
-                "Task " + taskId +
-                        " executing on " +
-                        Thread.currentThread().getName()
-        );
+        if (!runningTaskManager.tryStart(taskId)) {
+            System.out.println(
+                    "Task " + taskId + " is already running"
+            );
+            return;
+        }
 
-        monitorService.checkTask(taskId);
+        try {
+
+            System.out.println(
+                    "Task " + taskId +
+                            " executing on " +
+                            Thread.currentThread().getName()
+            );
+
+            monitorService.checkTask(taskId);
+
+        } finally {
+
+            runningTaskManager.finish(taskId);
+        }
     }
 }

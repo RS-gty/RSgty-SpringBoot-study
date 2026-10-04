@@ -54,6 +54,15 @@ public class MonitorService {
 
         taskRepository.save(task);
 
+        taskWebSocketService.sendTaskStatus(
+                new TaskStatusMessage(
+                        task.getId(),
+                        TaskStatus.RUNNING.name(),
+                        0L,
+                        null
+                )
+        );
+
         try {
             boolean success = monitorChecker.check(task);
 
